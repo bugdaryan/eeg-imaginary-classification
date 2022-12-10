@@ -15,6 +15,7 @@ jobs:
 
       - name: run-unit-tests
         run: |
+          cd tests
           pytest
         env:
           ENV: local
