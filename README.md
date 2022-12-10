@@ -14,7 +14,7 @@
  
  In order to get the dataset, we will use wget to download dataset to current directory
 
-- ```!wget -r -N -c -np https://physionet.org/files/eegmmidb/1.0.0/```
+- ```wget -r -N -c -np https://physionet.org/files/eegmmidb/1.0.0/```
 
 This will create a folder named `physionet.org` folder with all the eeg data in it.
 
@@ -29,6 +29,7 @@ usage: train.py [-h] [--data_in_path] [--data_out_path] [--model_checkpoints_pat
 optional arguments:
   -h, --help                    show this help message and exit
   --data_in_path                input data path
+  --data_out_path               output data path
   --model_checkpoints_path      path to model_checkpoints
   --epochs                      number of epochs
   --batch_size                  batch size
@@ -42,6 +43,7 @@ usage: inference.py [-h] [--data_in_path] [--data_out_path] [--model_path] [--re
 optional arguments:
   -h, --help                    show this help message and exit
   --data_in_path                input data path
+  --data_out_path               output data path
   --model_path                  path to trained model
   --results_path                path to results
 ```
