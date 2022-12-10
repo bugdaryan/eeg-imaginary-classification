@@ -32,6 +32,8 @@ exclude = [38, 88, 89, 92, 100, 104]
 def train(data_in_path, data_out_path, model_checkpoints_path, epochs=100, batch_size=32, patience=10):
     if not os.path.isdir(data_out_path):
         os.mkdir(data_out_path)
+
+    errors = 0
     
     subs = os.listdir(data_in_path)
     subjects = [int(x[1:]) for x in subs]
@@ -43,13 +45,17 @@ def train(data_in_path, data_out_path, model_checkpoints_path, epochs=100, batch
         if not os.path.isdir(save_path):
             os.mkdir(save_path)
         for sub in tqdm(subjects):
-            x, y = Utils.epoch(Utils.select_channels
-                (Utils.eeg_settings(Utils.del_annotations(Utils.concatenate_runs(
-                Utils.load_data(subjects=[sub], runs=runs, data_path=data_in_path)))), couple),
-                exclude_base=False)
+            try:
+                x, y = Utils.epoch(Utils.select_channels
+                    (Utils.eeg_settings(Utils.del_annotations(Utils.concatenate_runs(
+                    Utils.load_data(subjects=[sub], runs=runs, data_path=data_in_path)))), couple),
+                    exclude_base=False)
 
-            np.save(os.path.join(save_path, "x_sub_" + str(sub)), x, allow_pickle=True)
-            np.save(os.path.join(save_path, "y_sub_" + str(sub)), y, allow_pickle=True)
+                np.save(os.path.join(save_path, "x_sub_" + str(sub)), x, allow_pickle=True)
+                np.save(os.path.join(save_path, "y_sub_" + str(sub)), y, allow_pickle=True)
+            except:
+                errors += 1
+                continue
     
     x, y = Utils.load(channels, subjects, base_path=data_out_path)
     y_one_hot  = Utils.to_one_hot(y, by_sub=False)
@@ -117,12 +123,14 @@ def train(data_in_path, data_out_path, model_checkpoints_path, epochs=100, batch
         verbose=1, mode='auto', 
         min_lr=0.0000001
     )
-    callbacksList = [checkpoint, earlystopping, reduce_lr, PlotLossesKeras()]
+    callbacksList = [checkpoint, earlystopping, reduce_lr]#, PlotLossesKeras()]
 
     hist = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size,
                     validation_data=(x_valid, y_valid), callbacks=callbacksList, verbose=1) 
 
     model.save_weights(model_checkpoints_path+'model_weights.h5')
+
+    return model, errors
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
