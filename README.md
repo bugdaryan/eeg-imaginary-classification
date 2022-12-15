@@ -47,3 +47,10 @@ optional arguments:
   --model_path                  path to trained model
   --results_path                path to results
 ```
+
+### API
+```commandline
+python app.py
+```
+
+Endpoint for inference is `/predict' with zipped edf files
