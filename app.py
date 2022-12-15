@@ -22,11 +22,10 @@ def predict():
         zip_file.extractall(path=data_in)
 
     predictions, errors = inference(data_in, data_out, 'trained_models/bestModel_v2.h5', 'results/')
-    predictions = predictions.argmax(axis=1)
     predictions = predictions.tolist()
 
     return {'predictions': predictions}
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
